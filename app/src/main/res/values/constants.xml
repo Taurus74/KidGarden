@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="default_year_begin">901</integer>
+    <integer name="default_year_end">831</integer>
+    <integer name="default_absence_days_per_month">5</integer>
+    <integer name="max_absence_days_per_month">23</integer>
+    <integer name="default_absence_days_per_year">56</integer>
+    <integer name="max_absence_days_per_year">99</integer>
+</resources>

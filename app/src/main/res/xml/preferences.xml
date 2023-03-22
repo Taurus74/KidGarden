@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="YEAR_BEGIN"
+        android:title="@string/year_begin"
+        android:defaultValue="0901" />
+
+    <Preference
+        android:key="YEAR_END"
+        android:title="@string/year_end"
+        android:defaultValue="0831" />
+
+    <Preference
+        android:key="ABSENCE_DAYS_PER_MONTH"
+        android:title="@string/absence_days_per_month"
+        android:summary="@string/absence_days_per_month_sum" />
+
+    <Preference
+        android:key="ABSENCE_DAYS_PER_YEAR"
+        android:title="@string/absence_days_per_year"
+        android:summary="@string/absence_days_per_year_sum" />
+
+</PreferenceScreen>

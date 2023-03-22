@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="base_margin">16dp</dimen>
+    <dimen name="low_margin">4dp</dimen>
+    <dimen name="half_margin">8dp</dimen>
+    <dimen name="huge_margin">48dp</dimen>
+    <dimen name="min_height">48dp</dimen>
+    <dimen name="text_size">24sp</dimen>
+    <dimen name="text_size_low">20sp</dimen>
+</resources>

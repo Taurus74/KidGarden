@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/half_margin"
+    android:columnCount="7">
+
+    <TextView
+        android:id="@+id/tv_dec_month"
+        android:text=""
+        android:layout_columnWeight="1.0"
+        style="@style/CalendarWorkDay"/>
+
+    <TextView
+        android:id="@+id/month"
+        android:text=""
+        android:layout_columnWeight="5.0"
+        style="@style/CalendarMonth"/>
+
+    <TextView
+        android:id="@+id/tv_inc_month"
+        android:text=""
+        android:layout_columnWeight="1.0"
+        style="@style/CalendarWorkDay"/>
+
+</GridLayout>

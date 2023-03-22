@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Детский сад</string>
+    <string name="title_work_calendar">Производственный календарь</string>
+
+    <!-- Preferences -->
+    <string name="year_begin">Начало учебного года</string>
+    <string name="year_end">Окончание учебного года</string>
+    <string name="year_format">%1$d %2$s</string>
+    <string name="absence_days_per_month">Бесплатных дней отсутствия за месяц</string>
+    <string name="absence_days_per_month_sum">Число неоплачиваемых дней отсутствия ребенка за календарный месяц: %1$s</string>
+    <string name="absence_days_per_year">Дней отсутствия за год</string>
+    <string name="absence_days_per_year_sum">Общее число дней отпуска за учебный год: %1$s</string>
+
+    <!-- Buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Menu titles -->
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_import">Загрузить список детей</string>
+    <string name="menu_work_calendar">Производственный календарь</string>
+
+    <!-- Dialog's hints -->
+    <string name="hint_minus">Минус</string>
+    <string name="hint_plus">Плюс</string>
+    <string name="hint_name">Фамилия и имя ребенка</string>
+    <string name="hint_day">Число</string>
+
+    <string name="spinner">Месяц</string>
+    <string name="fab_add">Добавить</string>
+
+    <string name="hint_year_begin">Введите число и месяц начала учебного года</string>
+    <string name="hint_year_end">Введите число и месяц окончания учебного года</string>
+    <string name="hint_absence_days_per_month">Введите число дней отсутствия за месяц</string>
+    <string name="hint_absence_days_per_year">Введите число дней отпуска за год</string>
+
+
+    <string name="text_from">c</string>
+    <string name="text_to">по</string>
+    <string name="date_from">Дата начала</string>
+    <string name="date_to">Дата окончания</string>
+    <string name="add_absence">Добавить отсутствие</string>
+    <string name="absence_title">Отсутствие: %1$s</string>
+    <string name="no_absences">Не отсутствовал</string>
+    <string name="new_kid">Новый ребенок</string>
+
+    <string name="has_crossing">Невозможно добавить отсутствие: есть пересечение с другим периодом.</string>
+    <string name="wrong_dates">Ошибка: начальная дата позже конечной</string>
+    <string name="work_calendar">Производственный календарь</string>
+    <string name="text_delete">Удалить</string>
+    <string name="absence_hint">Выберите вид отсутствия</string>
+    <string name="dialog_delete_record">Запись будет удалена без возможности восстановления.</string>
+    <string name="dialog_title">Подтвердите удаление</string>
+    <string name="date_is_empty">Заполните %s дату</string>
+    <string name="wrong_month">Пожалуйста, выберите даты из одного месяца</string>
+
+    <string name="dec_year">Предыдущий год</string>
+    <string name="current_year">Текущий год</string>
+    <string name="inc_year">Следующий год</string>
+
+    <plurals name="plurals_days">
+        <item quantity="one">- %1$d день.</item>
+        <item quantity="two">- %1$d дня.</item>
+        <item quantity="few">- %1$d дня.</item>
+        <item quantity="many">- %1$d дней.</item>
+        <item quantity="other">- %1$d дней.</item>
+    </plurals>
+
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/minus_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/hint_minus"
+        android:drawableStart="@drawable/ic_minus"
+        app:iconGravity="textEnd"
+        app:iconPadding="0dp" />
+
+    <EditText
+        android:id="@+id/num_of_days"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:layout_gravity="center"
+        android:autofillHints=""
+        android:gravity="center"
+        android:hint="@string/hint_day"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textColorHint="#757575" />
+
+    <Button
+        android:id="@+id/plus_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/hint_plus"
+        android:drawableEnd="@drawable/ic_plus"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp" />
+
+</LinearLayout>
