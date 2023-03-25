@@ -69,16 +69,18 @@ class KidsViewModel @Inject constructor(
     val monthTo: LiveData<Int> = _monthTo
 
     // Список детей
-    val kids: LiveData<List<Kid>> = kidsRepository.getKids()
+    var kids: LiveData<List<Kid>> = MutableLiveData(listOf())
 
     // Набор записей об отсутствии в разрезе детей
-    val kidsAbsences: LiveData<Map<Int, List<Absence>>> =
-        kidsRepository.getAbsences(0, 0)
+    var kidsAbsences: LiveData<Map<Int, List<Absence>>> = MutableLiveData(emptyMap())
 
     init {
         setSeasonColor()
         setCurrentPeriod()
         updateDates()
+
+        kids = kidsRepository.getKids()
+        kidsAbsences = kidsRepository.getAbsences(monthFrom.value!!, monthTo.value!!)
     }
 
     fun deleteKid(kid: Kid) = kidsRepository.deleteKid(kid)

@@ -65,7 +65,9 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
             setHasFixedSize(true)
         }
 
-        initSwipeToDelete()
+        initSwipeToDelete(rvKidsList) {
+            deleteKid(it)
+        }
 
         binding.currentPeriod.setOnClickListener {
             DatePickerDialog(
@@ -111,17 +113,17 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
             }
     }
 
-    private fun initSwipeToDelete() {
-        val itemTouchHelper = ItemTouchHelper(object : SwipeHelper(rvKidsList) {
+    private fun initSwipeToDelete(recyclerView: RecyclerView, onClick: (Int) -> Unit) {
+        val itemTouchHelper = ItemTouchHelper(object : SwipeHelper(recyclerView) {
             override fun instantiateUnderlayButton(position: Int): List<UnderlayButton> {
-                return listOf(deleteButton(position))
+                return listOf(deleteButton(position, onClick))
             }
         })
 
-        itemTouchHelper.attachToRecyclerView(rvKidsList)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun deleteButton(position: Int): SwipeHelper.UnderlayButton {
+    private fun deleteButton(position: Int, _onClick: (Int) -> Unit): SwipeHelper.UnderlayButton {
         return SwipeHelper.UnderlayButton(
             requireContext(),
             resources.getString(R.string.text_delete),
@@ -129,9 +131,9 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
             android.R.color.holo_red_light,
             object : SwipeHelper.UnderlayButtonClickListener {
                 override fun onClick() {
-                   ConfirmDialog({_, _ ->
-                        deleteKid(position)
-                   }, {_, _ -> })
+                   ConfirmDialog(
+                       {_, _ -> _onClick(position) },
+                       {_, _ -> })
                        .show(requireActivity().supportFragmentManager, "confirm")
                 }
             })
