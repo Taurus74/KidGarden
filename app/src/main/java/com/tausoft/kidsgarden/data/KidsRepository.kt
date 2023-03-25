@@ -1,5 +1,6 @@
 package com.tausoft.kidsgarden.data
 
+import androidx.lifecycle.LiveData
 import com.tausoft.kidsgarden.di.DatabaseAbsences
 import com.tausoft.kidsgarden.di.DatabaseKids
 import javax.inject.Inject
@@ -15,13 +16,8 @@ class KidsRepository @Inject constructor() {
 
     fun getKids() = kids.getKids()
 
-    fun getAbsences(dateFrom: Int, dateTo: Int): Map<Int, List<Absence>> {
-        var result: Map<Int, List<Absence>> = mapOf()
-         absences.getAbsences(dateFrom, dateTo) {
-            result = it
-        }
-        return result
-    }  
+    fun getAbsences(dateFrom: Int, dateTo: Int): LiveData<Map<Int, List<Absence>>> =
+         absences.getAbsences(dateFrom, dateTo)
 
     fun deleteKid(kid: Kid) = kids.deleteKid(kid)
 }

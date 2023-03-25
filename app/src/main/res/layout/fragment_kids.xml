@@ -1,74 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.KidsFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.tausoft.kidsgarden.viewModels.KidsViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        tools:context=".ui.KidsFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/base_margin"
-            android:paddingEnd="@dimen/base_margin"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/dec_month"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:drawableStart="@drawable/ic_left"
-                app:iconGravity="textEnd"
-                app:iconPadding="0dp" />
+                android:paddingStart="@dimen/base_margin"
+                android:paddingEnd="@dimen/base_margin"
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/current_period"
-                android:textSize="@dimen/text_size"
-                android:fontFeatureSettings=""
-                android:layout_width="0dp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dec_month"
+                    android:onClick="@{() -> viewmodel.decMonth()}"
+                    app:seasonColor="@{viewmodel.seasonColor}"
+                    android:contentDescription="@string/dec_month"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:drawableStart="@drawable/ic_left"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="0dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/current_period"
+                    android:text="@{viewmodel.currentPeriod}"
+                    app:seasonColor="@{viewmodel.seasonColor}"
+                    android:textSize="@dimen/text_size_low"
+                    android:contentDescription="@string/current_month"
+                    android:fontFeatureSettings=""
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5.5"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_marginEnd="@dimen/half_margin" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/inc_month"
+                    app:seasonColor="@{viewmodel.seasonColor}"
+                    android:onClick="@{() -> viewmodel.incMonth()}"
+                    android:contentDescription="@string/inc_month"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:drawableEnd="@drawable/ic_right"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_kids_list"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="5.5"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/half_margin"
-                android:layout_marginEnd="@dimen/half_margin" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/inc_month"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:drawableEnd="@drawable/ic_right"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp" />
+                android:padding="@dimen/base_margin"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_kids_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/base_margin"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:text="@string/fab_add"
+            android:contentDescription="@string/fab_add"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/purple_500"
+            app:icon="@drawable/ic_person_add"
+            app:iconTint="@color/white"/>
 
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:text="@string/fab_add"
-        android:contentDescription="@string/fab_add"
-        app:icon="@drawable/ic_person_add"/>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -57,6 +57,9 @@
     <string name="dec_year">Предыдущий год</string>
     <string name="current_year">Текущий год</string>
     <string name="inc_year">Следующий год</string>
+    <string name="dec_month">Предыдущий месяц</string>
+    <string name="current_month">Текущий месяц</string>
+    <string name="inc_month">Следующий месяц</string>
 
     <plurals name="plurals_days">
         <item quantity="one">- %1$d день.</item>
