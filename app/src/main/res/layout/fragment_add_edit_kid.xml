@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.tausoft.kidsgarden.viewModels.AddEditKidViewModel" />
         <variable
             name="absences"
@@ -28,7 +28,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/kid_name"
-                android:text="@{viewmodel.name}"
+                android:text="@{viewModel.name}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_name"
@@ -40,8 +40,8 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_absence"
-            android:text="@{viewmodel.absences}"
-            app:hideIfZero="@{viewmodel.id}"
+            android:text="@{viewModel.absences}"
+            app:hideIfZero="@{viewModel.id}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_low"
@@ -50,7 +50,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_absence"
             android:text="@string/add_absence"
-            app:hideIfZero="@{viewmodel.id}"
+            app:hideIfZero="@{viewModel.id}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.tausoft.kidsgarden.data.*
 import com.tausoft.kidsgarden.ui.MainActivity
 import com.tausoft.kidsgarden.util.AbsencesFormatter
+import com.tausoft.kidsgarden.util.Date
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -34,9 +35,9 @@ class AddEditKidViewModel @Inject constructor(
     private var _absences = MutableLiveData("")
     val absences: LiveData<String> = _absences
 
-    // Границы текущего месяца
-    var monthFrom = 0
-    var monthTo   = 0
+    // Текущий месяц
+    var year  = 0
+    var month = 0
 
     init {
         _id.observeForever {
@@ -45,7 +46,8 @@ class AddEditKidViewModel @Inject constructor(
                     kid = _kid
                     _name.value = kid.name
                 }
-                kidsRepository.getAbsences(it, monthFrom, monthTo)
+                val aDate = Date(1, month, year)
+                kidsRepository.getAbsences(it, aDate.toInt(), aDate.incMonth().toInt())
                     .observeForever { kidAbsences ->
                         _absences.value = absencesFormatter.formatAbsences(kidAbsences)
                     }
@@ -53,11 +55,11 @@ class AddEditKidViewModel @Inject constructor(
         }
     }
 
-    fun fillBundle(): Bundle {
+    fun bundle(): Bundle {
         val bundle = Bundle()
-        bundle.putInt(MainActivity.KID_ID,     kid.id)
-        bundle.putInt(MainActivity.MONTH_FROM, monthFrom)
-        bundle.putInt(MainActivity.MONTH_TO,   monthTo)
+        bundle.putInt(MainActivity.KID_ID, kid.id)
+        bundle.putInt(MainActivity.YEAR,  year)
+        bundle.putInt(MainActivity.MONTH, month)
         return bundle
     }
 

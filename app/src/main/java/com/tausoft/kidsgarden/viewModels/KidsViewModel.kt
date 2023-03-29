@@ -3,6 +3,7 @@ package com.tausoft.kidsgarden.viewModels
 import android.app.Application
 import android.graphics.Typeface
 import android.os.Build
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.StyleSpan
 import androidx.lifecycle.LiveData
@@ -12,6 +13,7 @@ import com.tausoft.kidsgarden.R
 import com.tausoft.kidsgarden.data.Absence
 import com.tausoft.kidsgarden.data.Kid
 import com.tausoft.kidsgarden.data.KidsRepository
+import com.tausoft.kidsgarden.ui.MainActivity
 import com.tausoft.kidsgarden.util.CalendarHelper
 import com.tausoft.kidsgarden.util.Date
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,44 +45,49 @@ class KidsViewModel @Inject constructor(
     // - год
     private val _year = MutableLiveData(CalendarHelper.currentYear())
     val year: LiveData<Int> = _year
-    fun setYear(year: Int) {
+    private fun setYear(year: Int) {
         _year.value = year
     }
 
     // - месяц
     private val _month = MutableLiveData(CalendarHelper.currentMonth())
     val month: LiveData<Int> = _month
-    fun setMonth(month: Int) {
+    private fun setMonth(month: Int) {
         _month.value = month
     }
 
     // - число
     private val _dayOfMonth = MutableLiveData(CalendarHelper.currentDay())
     var dayOfMonth: LiveData<Int> = _dayOfMonth
-    fun setDay(day: Int) {
+    private fun setDay(day: Int) {
         _dayOfMonth.value = day
     }
 
-    // Границы текущего (на момент запуска) месяца
-    private var _monthFrom = MutableLiveData(0)
-    val monthFrom: LiveData<Int> = _monthFrom
-
-    private var _monthTo   = MutableLiveData(0)
-    val monthTo: LiveData<Int> = _monthTo
-
     // Список детей
-    var kids: LiveData<List<Kid>> = MutableLiveData(listOf())
+    private var _kids = MutableLiveData<List<Kid>>(listOf())
+    var kids: LiveData<List<Kid>> = _kids
 
     // Набор записей об отсутствии в разрезе детей
-    var kidsAbsences: LiveData<Map<Int, List<Absence>>> = MutableLiveData(emptyMap())
+    private var _kidsAbsences = MutableLiveData<Map<Int, List<Absence>>>(emptyMap())
+    var kidsAbsences: LiveData<Map<Int, List<Absence>>> = _kidsAbsences
 
     init {
-        setSeasonColor()
-        setCurrentPeriod()
-        updateDates()
-
-        kids = kidsRepository.getKids()
-        kidsAbsences = kidsRepository.getAbsences(monthFrom.value!!, monthTo.value!!)
+        _year.observeForever {
+            setCurrentPeriod()
+        }
+        _month.observeForever {
+            setSeasonColor()
+            setCurrentPeriod()
+        }
+        _currentPeriod.observeForever {
+            kidsRepository.getKids().observeForever {
+                _kids.value = it
+            }
+            val aDate = Date(1, month.value!!, year.value!!)
+            kidsRepository.getAbsences(aDate.toInt(), aDate.incMonth().toInt()).observeForever {
+                _kidsAbsences.value = it
+            }
+        }
     }
 
     fun deleteKid(kid: Kid) = kidsRepository.deleteKid(kid)
@@ -91,9 +98,6 @@ class KidsViewModel @Inject constructor(
             _year.value = _year.value!! - 1
             _month.value = 11
         }
-        setSeasonColor()
-        setCurrentPeriod()
-        updateDates()
     }
 
     fun incMonth() {
@@ -102,19 +106,15 @@ class KidsViewModel @Inject constructor(
             _year.value = _year.value!! + 1
             _month.value = 0
         }
-        setSeasonColor()
-        setCurrentPeriod()
     }
 
-    // Обновить данные по границам месяца и учебного года в связи с выбором новой даты или месяца
-    fun updateDates() {
-        val aDate = Date(1, month.value!!, year.value!!)
-        _monthFrom.value = aDate.toInt()
-        _monthTo.value   = aDate.incMonth().toInt()
+    fun onPeriodChange(year: Int, month: Int, dayOfMonth: Int = 0) {
+        setYear(year)
+        setMonth(month)
+        setDay(dayOfMonth)
     }
 
-    private fun getColor(month: Int) =
-        getColor( CalendarHelper.getSeason(month) )
+    private fun getColor(month: Int) = getColor( CalendarHelper.getSeason(month) )
 
     private fun getColor(season: CalendarHelper.Season): Int =
         when (season) {
@@ -129,5 +129,12 @@ class KidsViewModel @Inject constructor(
             application.applicationContext.resources.getColor(resId, null)
         else
             @Suppress("DEPRECATION")
-            application.applicationContext.resources.getColor(R.color.spring)
+            application.applicationContext.resources.getColor(resId)
+
+    fun bundle(): Bundle {
+        val bundle = Bundle()
+        bundle.putInt(MainActivity.YEAR,  year.value!!)
+        bundle.putInt(MainActivity.MONTH, month.value!!)
+        return bundle
+    }
 }

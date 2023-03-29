@@ -23,8 +23,6 @@ import com.tausoft.kidsgarden.databinding.RowKidsBinding
 import com.tausoft.kidsgarden.navigator.AppNavigator
 import com.tausoft.kidsgarden.navigator.Screens
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.KID_ID
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_FROM
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_TO
 import com.tausoft.kidsgarden.util.*
 import com.tausoft.kidsgarden.viewModels.KidsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,12 +31,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
 
-    private lateinit var binding: FragmentKidsBinding
-    private val viewModel: KidsViewModel by viewModels()
-
     @Inject lateinit var navigator: AppNavigator
     @Inject lateinit var absencesFormatter: AbsencesFormatter
 
+    private val viewModel: KidsViewModel by viewModels()
+    private lateinit var binding: FragmentKidsBinding
     private lateinit var rvKidsList: RecyclerView
     private lateinit var adapter: KidsAdapter
 
@@ -54,15 +51,12 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.updateDates()
-
         adapter = KidsAdapter(absencesFormatter, navigator)
         rvKidsList = binding.rvKidsList
         rvKidsList.adapter = adapter
-        rvKidsList.addItemDecoration(
-            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        )
         rvKidsList.apply {
+            addItemDecoration(
+                DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             setHasFixedSize(true)
         }
 
@@ -83,15 +77,6 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
         binding.fab.setOnClickListener {
             navigator.navigateTo(Screens.EDIT_KID, Bundle())
         }
-
-    }
-
-    private fun onPeriodChange(year: Int, month: Int, dayOfMonth: Int = 0) {
-        viewModel.setYear(year)
-        viewModel.setMonth(month)
-        viewModel.setDay(dayOfMonth)
-        viewModel.updateDates()
-        getKids()
     }
 
     override fun onResume() {
@@ -100,18 +85,23 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
     }
 
     private fun getKids() {
-        viewModel.kids
-            .observe(this) { kidsList ->
-                viewModel.kidsAbsences
-                    .observe(this) { absencesMap ->
-                        val bundle = Bundle()
-                        bundle.putInt(MONTH_FROM, viewModel.monthFrom.value!!)
-                        bundle.putInt(MONTH_TO,   viewModel.monthTo.value!!)
-                        rvKidsList.adapter = adapter
-                        adapter.setDatasets(kidsList, absencesMap, bundle)
-                        adapter.notifyItemRangeChanged(0, kidsList.size)
-                    }
-            }
+        viewModel.kids.observe(this) { kidsList ->
+            rvKidsList.adapter = adapter
+            adapter.setDatasets(
+                kidsList,
+                viewModel.kidsAbsences.value ?: mapOf(),
+                viewModel.bundle())
+            adapter.notifyItemRangeChanged(0, kidsList.size)
+        }
+
+        viewModel.kidsAbsences.observe(this) { absencesMap ->
+            rvKidsList.adapter = adapter
+            adapter.setDatasets(
+                viewModel.kids.value ?: listOf(),
+                absencesMap,
+                viewModel.bundle())
+            adapter.notifyItemRangeChanged(0, viewModel.kids.value!!.size)
+        }
     }
 
     private fun initSwipeToDelete(recyclerView: RecyclerView, onClick: (Int) -> Unit) {
@@ -147,7 +137,7 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        onPeriodChange(year, month, dayOfMonth)
+        viewModel.onPeriodChange(year, month, dayOfMonth)
     }
 }
 

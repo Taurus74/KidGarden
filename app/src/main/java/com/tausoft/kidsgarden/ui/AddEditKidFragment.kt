@@ -11,26 +11,26 @@ import com.tausoft.kidsgarden.R
 import com.tausoft.kidsgarden.databinding.FragmentAddEditKidBinding
 import com.tausoft.kidsgarden.navigator.AppNavigator
 import com.tausoft.kidsgarden.navigator.Screens
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_FROM
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_TO
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.KID_ID
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.YEAR
 import com.tausoft.kidsgarden.viewModels.AddEditKidViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddEditKidFragment : Fragment() {
-    private lateinit var binding: FragmentAddEditKidBinding
-    private val viewModel: AddEditKidViewModel by viewModels()
 
     @Inject lateinit var navigator: AppNavigator
+    private lateinit var binding: FragmentAddEditKidBinding
+    private val viewModel: AddEditKidViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { it ->
             with (viewModel) {
-                monthFrom = it.getInt(MONTH_FROM)
-                monthTo   = it.getInt(MONTH_TO)
+                year  = it.getInt(YEAR)
+                month = it.getInt(MONTH)
                 setId(it.getInt(KID_ID))
             }
         }
@@ -43,17 +43,17 @@ class AddEditKidFragment : Fragment() {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_add_edit_kid, container, false)
         binding.lifecycleOwner = this
-        binding.viewmodel = viewModel
+        binding.viewModel = viewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.textAbsence.setOnClickListener {
-            navigator.navigateTo(Screens.ABSENCES, viewModel.fillBundle())
+            navigator.navigateTo(Screens.ABSENCES, viewModel.bundle())
         }
 
         binding.addAbsence.setOnClickListener {
-            navigator.navigateTo(Screens.EDIT_ABSENCE, viewModel.fillBundle())
+            navigator.navigateTo(Screens.EDIT_ABSENCE, viewModel.bundle())
         }
 
         binding.cancelButton.setOnClickListener {

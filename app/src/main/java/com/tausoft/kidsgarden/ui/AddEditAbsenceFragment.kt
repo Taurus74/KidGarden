@@ -11,8 +11,8 @@ import com.tausoft.kidsgarden.R
 import com.tausoft.kidsgarden.databinding.FragmentAddEditAbsenceBinding
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.ABSENCE_ID
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.KID_ID
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_FROM
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_TO
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.YEAR
 import com.tausoft.kidsgarden.util.Date
 import com.tausoft.kidsgarden.viewModels.AddEditAbsenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,10 +26,12 @@ class AddEditAbsenceFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { it ->
-            viewModel.setKidId(it.getInt(KID_ID))
-            viewModel.monthFrom = it.getInt(MONTH_FROM)
-            viewModel.monthTo   = it.getInt(MONTH_TO)
-            viewModel.setId   (it.getInt(ABSENCE_ID))
+            with (viewModel) {
+                setKidId(it.getInt(KID_ID))
+                setId   (it.getInt(ABSENCE_ID))
+                setYear (it.getInt(YEAR))
+                setMonth(it.getInt(MONTH))
+            }
         }
     }
 
@@ -41,7 +43,6 @@ class AddEditAbsenceFragment : Fragment() {
             .inflate(inflater, R.layout.fragment_add_edit_absence, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
-
         binding.absenceTypeStr.setOnClickListener { popupMenu().show() }
 
         return binding.root
@@ -65,8 +66,6 @@ class AddEditAbsenceFragment : Fragment() {
         }
 
         binding.OKButton.setOnClickListener {
-            // Проверка заполнения не нужна - даты по умолчанию заполнены,
-            // очистка полей заблокирована
             if (!viewModel.checkDatesOrder()) {
                 Toast.makeText(
                     requireContext(),

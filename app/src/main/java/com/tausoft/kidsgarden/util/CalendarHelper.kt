@@ -73,7 +73,7 @@ object CalendarHelper {
     // Получить максимальное число месяца для заданных месяца и года
     fun maxDayOfMonth(month: Int, year: Int = 0): Int {
         val calendar = Calendar.getInstance()
-        calendar.set(currentYear(year), month - 1, 1)
+        calendar.set(currentYear(year), month, 1)
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
 

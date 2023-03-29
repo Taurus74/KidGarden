@@ -1,111 +1,88 @@
 package com.tausoft.kidsgarden.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.tausoft.kidsgarden.R
 import com.tausoft.kidsgarden.data.Absence
-import com.tausoft.kidsgarden.data.AbsencesDataSource
-import com.tausoft.kidsgarden.data.KidsDataSource
-import com.tausoft.kidsgarden.di.DatabaseAbsences
-import com.tausoft.kidsgarden.di.DatabaseKids
+import com.tausoft.kidsgarden.databinding.FragmentAbsencesBinding
+import com.tausoft.kidsgarden.databinding.RowAbsenceBinding
 import com.tausoft.kidsgarden.navigator.AppNavigator
 import com.tausoft.kidsgarden.navigator.Screens
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.ABSENCE_ID
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_FROM
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH_TO
 import com.tausoft.kidsgarden.ui.MainActivity.Companion.KID_ID
-import com.tausoft.kidsgarden.ui.MainActivity.Companion.TAG
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.MONTH
+import com.tausoft.kidsgarden.ui.MainActivity.Companion.YEAR
 import com.tausoft.kidsgarden.util.CalendarHelper
 import com.tausoft.kidsgarden.util.SwipeHelper
+import com.tausoft.kidsgarden.viewModels.AbsencesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AbsencesFragment : Fragment() {
-    @DatabaseKids
-    @Inject lateinit var kids: KidsDataSource
-    @DatabaseAbsences
-    @Inject lateinit var absences: AbsencesDataSource
+
+    private lateinit var binding: FragmentAbsencesBinding
+    private val viewModel: AbsencesViewModel by viewModels()
+
     @Inject lateinit var navigator: AppNavigator
-
-    private var kidId: Int = 0
-    private var monthFrom = 0
-    private var monthTo   = 0
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AbsencesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { it ->
-            kidId = it.getInt(KID_ID)
-            monthFrom = it.getInt(MONTH_FROM)
-            monthTo   = it.getInt(MONTH_TO)
+            viewModel.setKidId(it.getInt(KID_ID))
+            viewModel.year  = it.getInt(YEAR)
+            viewModel.month = it.getInt(MONTH)
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_absences, container, false)
-
-        view.findViewById<FloatingActionButton>(R.id.fab_add_absence).setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt(KID_ID, kidId)
-            navigator.navigateTo(Screens.EDIT_ABSENCE, bundle)
-        }
-
-        return view
+    ): View {
+        binding = FragmentAbsencesBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById<RecyclerView>(R.id.rv_absences_list).apply {
+        recyclerView = binding.rvAbsencesList.apply {
             setHasFixedSize(true)
         }
+
         adapter = AbsencesAdapter(navigator)
         recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        )
+
+        binding.fabAddAbsence.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt(KID_ID, viewModel.kidId.value!!)
+            navigator.navigateTo(Screens.EDIT_ABSENCE, bundle)
+        }
 
         initSwipeToDelete()
     }
 
     override fun onResume() {
         super.onResume()
-        if (kidId > 0)
-            getAbsences(kidId)
-        else {
-            Log.e(TAG, "Wrong parameter: kidId = 0")
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        makeTitle()
-    }
-
-    private fun makeTitle() {
-        if (kidId == 0)
-            requireActivity().title = resources.getString(R.string.new_kid)
-        else {
-            kids.getKid(kidId) {
-                requireActivity().title = it.name
-            }
-        }
-    }
-
-    private fun getAbsences(kidId: Int) {
-        absences.getKidAbsences(kidId, monthFrom, monthTo) {
-            val bundle = Bundle()
-            bundle.putInt(MONTH_FROM, monthFrom)
-            bundle.putInt(MONTH_TO,   monthTo)
+        viewModel.getAbsences().observe(this) {
             recyclerView.adapter = adapter
-            adapter.setDatasets(it, bundle)
+            adapter.setDatasets(it, viewModel.bundle())
             adapter.notifyItemRangeChanged(0, it.size)
         }
     }
@@ -138,7 +115,7 @@ class AbsencesFragment : Fragment() {
 
     private fun deleteAbsence(position: Int) {
         val absence = adapter.getItem(position)
-        absences.deleteAbsence(absence)
+        viewModel.deleteAbsence(absence)
         adapter.delete(position)
     }
 
@@ -147,6 +124,7 @@ class AbsencesFragment : Fragment() {
 private class AbsencesAdapter(private val mNavigator: AppNavigator)
     : RecyclerView.Adapter<AbsencesAdapter.AbsencesViewHolder>() {
 
+    private lateinit var binding: RowAbsenceBinding
     private var absencesDataSet: MutableList<Absence> = mutableListOf()
     private var bundle: Bundle = Bundle()
 
@@ -155,7 +133,7 @@ private class AbsencesAdapter(private val mNavigator: AppNavigator)
         bundle = mBundle
     }
 
-    class AbsencesViewHolder(layout: LinearLayout, mNavigator: AppNavigator, val bundle: Bundle):
+    class AbsencesViewHolder(layout: LinearLayout, val bundle: Bundle, mNavigator: AppNavigator):
         RecyclerView.ViewHolder(layout), View.OnClickListener {
 
         private val navigator = mNavigator
@@ -179,12 +157,10 @@ private class AbsencesAdapter(private val mNavigator: AppNavigator)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbsencesViewHolder {
-        return AbsencesViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.row_absence, parent, false) as LinearLayout,
-            mNavigator,
-            bundle
-        )
+        binding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.row_absence, parent, false)
+        return AbsencesViewHolder(binding.root as LinearLayout, bundle, mNavigator)
     }
 
     override fun onBindViewHolder(holder: AbsencesViewHolder, position: Int) {

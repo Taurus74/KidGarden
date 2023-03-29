@@ -14,11 +14,10 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val TAG = "KidsGarden"
         const val KID_ID     = "KID_ID"
         const val ABSENCE_ID = "ABSENCE_ID"
-        const val MONTH_FROM = "MONTH_FROM"
-        const val MONTH_TO   = "MONTH_TO"
+        const val YEAR       = "YEAR"
+        const val MONTH      = "MONTH"
     }
 
     @Inject lateinit var navigator: AppNavigator

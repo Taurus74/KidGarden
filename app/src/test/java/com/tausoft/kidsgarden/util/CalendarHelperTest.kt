@@ -79,17 +79,17 @@ internal class CalendarHelperTest {
 
     @Test
     fun maxDayOfMonth() {
-        assertEquals(31, CalendarHelper.maxDayOfMonth(1))
-        assertEquals(31, CalendarHelper.maxDayOfMonth(1, 2023))
-        assertEquals(30, CalendarHelper.maxDayOfMonth(6))
-        assertEquals(30, CalendarHelper.maxDayOfMonth(6, 2023))
-        assertEquals(31, CalendarHelper.maxDayOfMonth(12))
-        assertEquals(31, CalendarHelper.maxDayOfMonth(12, 2023))
-        assertEquals(28, CalendarHelper.maxDayOfMonth(2, 2023))
-        assertEquals(29, CalendarHelper.maxDayOfMonth(2, 2024))
+        assertEquals(31, CalendarHelper.maxDayOfMonth(0))
+        assertEquals(31, CalendarHelper.maxDayOfMonth(0, 2023))
+        assertEquals(30, CalendarHelper.maxDayOfMonth(5))
+        assertEquals(30, CalendarHelper.maxDayOfMonth(5, 2023))
+        assertEquals(31, CalendarHelper.maxDayOfMonth(11))
+        assertEquals(31, CalendarHelper.maxDayOfMonth(11, 2023))
+        assertEquals(28, CalendarHelper.maxDayOfMonth(1, 2023))
+        assertEquals(29, CalendarHelper.maxDayOfMonth(1, 2024))
 
-        assertNotEquals(29, CalendarHelper.maxDayOfMonth(2, 2023))
-        assertNotEquals(28, CalendarHelper.maxDayOfMonth(2, 2024))
+        assertNotEquals(29, CalendarHelper.maxDayOfMonth(1, 2023))
+        assertNotEquals(28, CalendarHelper.maxDayOfMonth(1, 2024))
     }
 
     @Test

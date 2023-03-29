@@ -15,6 +15,7 @@ import com.tausoft.kidsgarden.util.Date
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.min
 
 @HiltViewModel
 class AddEditAbsenceViewModel @Inject constructor(
@@ -22,14 +23,26 @@ class AddEditAbsenceViewModel @Inject constructor(
     private val daysOffRepository: DaysOffRepository
 ): ObservableViewModel() {
 
-    companion object {
-        const val PICKER_DIALOG_FROM = "PICKER_DIALOG_FROM"
-        const val PICKER_DIALOG_TO   = "PICKER_DIALOG_TO"
-
-        val defaultDate = with (CalendarHelper) {
-            Date(currentDay(), currentMonth(), currentYear()).toInt()
-        }
+    // Текущий месяц
+    private var _year = MutableLiveData( CalendarHelper.currentYear() )
+    val year: LiveData<Int> = _year
+    fun setYear(year: Int) {
+        _year.value = year
     }
+
+    private var _month = MutableLiveData( CalendarHelper.currentMonth() )
+    val month: LiveData<Int> = _month
+    fun setMonth(month: Int) {
+        _month.value = month
+    }
+
+    private var _defaultDate = MutableLiveData( getDate(
+        CalendarHelper.currentDay(),
+        month.value ?: CalendarHelper.currentMonth(),
+        year.value ?: CalendarHelper.currentYear()
+    ) )
+
+    private val defaultDate: LiveData<Int> = _defaultDate
 
     // id ребенка
     private var _kidId = MutableLiveData(0)
@@ -55,25 +68,21 @@ class AddEditAbsenceViewModel @Inject constructor(
     var absence = Absence()
 
     // Границы отсутствия
-    private var _aDateFrom = MutableLiveData(defaultDate)
+    private var _aDateFrom = MutableLiveData(defaultDate.value!!)
     private val aDateFrom: LiveData<Int> = _aDateFrom
     fun setDateFrom(date: Int) {
         _aDateFrom.value = date
     }
     fun getDateFromPickerDialog(context: Context, listener: OnDateSetListener) =
-        getDatePickerDialog(context, listener,
-            Date().fromInt(aDateFrom.value!!), PICKER_DIALOG_FROM
-        )
+        getDatePickerDialog( context, listener, Date().fromInt(aDateFrom.value!!) )
 
-    private var _aDateTo = MutableLiveData(defaultDate)
+    private var _aDateTo = MutableLiveData(defaultDate.value!!)
     private val aDateTo: LiveData<Int> = _aDateTo
     fun setDateTo(date: Int) {
         _aDateTo.value = date
     }
     fun getDateToPickerDialog(context: Context, listener: OnDateSetListener) =
-        getDatePickerDialog(context, listener,
-            Date().fromInt(aDateTo.value!!), PICKER_DIALOG_TO
-        )
+        getDatePickerDialog( context, listener, Date().fromInt(aDateTo.value!!) )
 
     // и текстовое представление
     private var _dateFrom = MutableLiveData("")
@@ -82,17 +91,13 @@ class AddEditAbsenceViewModel @Inject constructor(
     private var _dateTo = MutableLiveData("")
     val dateTo: LiveData<String> = _dateTo
 
-    // Границы текущего месяца
-    var monthFrom = 0
-    var monthTo   = 0
-
     // Тип отсутствия
     // - набор доступных значений
     private var _absenceTypes = MutableLiveData(AbsenceType.values().toList())
     val absenceTypes: LiveData<List<AbsenceType>> = _absenceTypes
 
     // - выбранное значение
-    private var _absenceTypeStr = MutableLiveData("")
+    private var _absenceTypeStr = MutableLiveData(AbsenceType.ABSENCE.toString())
     val absenceTypeStr: LiveData<String> = _absenceTypeStr
     fun setAbsenceTypeStr(value: String) {
         _absenceTypeStr.value = value
@@ -115,6 +120,20 @@ class AddEditAbsenceViewModel @Inject constructor(
                     setDateTo  (_absence.dateTo)
                 }
             }
+        }
+        _month.observeForever {
+            _defaultDate.value = getDate(
+                CalendarHelper.currentDay(), it,year.value ?: CalendarHelper.currentYear()
+            )
+        }
+        _year.observeForever {
+            _defaultDate.value = getDate(
+                CalendarHelper.currentDay(),month.value ?: CalendarHelper.currentMonth(), it
+            )
+        }
+        _defaultDate.observeForever {
+            _aDateFrom.value = it
+            _aDateTo.value   = it
         }
         _aDateFrom.observeForever {
             _dateFrom.value = formatDate( it )
@@ -159,33 +178,23 @@ class AddEditAbsenceViewModel @Inject constructor(
             false
     }
 
-    private fun getDatePickerDialog(
-        context: Context, listener: OnDateSetListener, date: Date, tag: String)
-    : DatePickerDialog {
-        val datePickerDialog = DatePickerDialog(
-            context, listener, date.year, date.month, date.day)
-        datePickerDialog.datePicker.tag = tag
-        return datePickerDialog
-    }
+    private fun getDatePickerDialog(context: Context, listener: OnDateSetListener, date: Date) =
+        DatePickerDialog( context, listener, date.year, date.month, date.day )
 
-    // Проверка: начальная дата не позже конечной
+    // ----------
+    // Проверки:
+    // - начальная дата не позже конечной
     fun checkDatesOrder() = aDateFrom.value!! <= aDateTo.value!!
 
-    // Проверка: введённые даты из одного месяца
+    // - введённые даты из одного месяца
     fun sameMonthDates() =
         Date().fromInt(aDateFrom.value!!).month == Date().fromInt(aDateTo.value!!).month
 
-    // Проверка на пересечение нового периода с уже введёнными
+    // - на пересечение нового периода с уже введёнными
     fun checkCrossing() = kidsRepository
         .checkCrossing(kidId.value!!, id.value!!, aDateFrom.value!!, aDateTo.value!!)
 
-    // Расчёт кол-ва дней
-    private fun countNumOfDays() =
-        CalendarHelper.dateDiff(aDateFrom.value!!, aDateTo.value!!) -
-            // Вычесть нерабочие дни
-            daysOffRepository.getDaysOffCount(aDateFrom.value!!, aDateTo.value!!)
-
-    // Проверка лимита по количеству дней в зав-ти от типа отсутствия
+    // - лимита по количеству дней в зав-ти от типа отсутствия
     private fun checkLimits(context: Context, numOfDays: Int): Boolean {
         // Получить даты начала и окончания периода в зависимости от заданной даты и типа отсутствия
         val limitFrom = AbsencesHelper(context)
@@ -199,5 +208,19 @@ class AddEditAbsenceViewModel @Inject constructor(
 
         // Проверить и вернуть результат
         return AbsencesHelper(context).checkLimits(absenceType, numOfDays + sum)
+    }
+    // Проверки
+    // ----------
+
+    // Расчёт кол-ва дней
+    private fun countNumOfDays() =
+        CalendarHelper.dateDiff(aDateFrom.value!!, aDateTo.value!!) -
+            // Вычесть нерабочие дни
+            daysOffRepository.getDaysOffCount(aDateFrom.value!!, aDateTo.value!!)
+
+    // Получить корректную дату по заданным параметрам
+    private fun getDate(day: Int, month: Int, year: Int): Int {
+        val maxDayOfMonth = CalendarHelper.maxDayOfMonth(month, year)
+        return Date( min(day, maxDayOfMonth), month, year ).toInt()
     }
 }

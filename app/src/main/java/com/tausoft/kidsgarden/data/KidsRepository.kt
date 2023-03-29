@@ -32,6 +32,8 @@ class KidsRepository @Inject constructor() {
 
     fun deleteKid(kid: Kid) = kids.deleteKid(kid)
 
+    fun deleteAbsence(absence: Absence) = absences.deleteAbsence(absence)
+
     fun checkCrossing(kidId: Int, absenceId: Int, dateFrom: Int, dateTo: Int) =
         absences.checkCrossing(kidId, absenceId, dateFrom, dateTo)
 
