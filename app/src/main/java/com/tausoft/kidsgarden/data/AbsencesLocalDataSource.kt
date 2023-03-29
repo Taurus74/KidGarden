@@ -2,6 +2,7 @@ package com.tausoft.kidsgarden.data
 
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.LiveData
 import com.tausoft.kidsgarden.dao.AbsenceDao
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -20,22 +21,11 @@ class AbsencesLocalDataSource @Inject constructor(private val absenceDao: Absenc
         }
     }
 
-    override fun getAbsences(
-        dateFrom: Int, dateTo: Int, callback: (Map<Int, List<Absence>>) -> Unit
-    ) {
-        executorService.execute {
-            val absences = absenceDao.getAbsences(dateFrom, dateTo)
-            mainThreadHandler.post { callback(absences) }
-        }
-    }
+    override fun getAbsences(dateFrom: Int, dateTo: Int): LiveData<Map<Int, List<Absence>>> =
+        absenceDao.getAbsences(dateFrom, dateTo)
 
-    override fun getKidAbsences(
-        kidId: Int, dateFrom: Int, dateTo: Int, callback: (List<Absence>) -> Unit) {
-        executorService.execute {
-            val absences = absenceDao.getKidAbsences(kidId, dateFrom, dateTo)
-            mainThreadHandler.post { callback(absences) }
-        }
-    }
+    override fun getKidAbsences(kidId: Int, dateFrom: Int, dateTo: Int): LiveData<List<Absence>> =
+        absenceDao.getKidAbsences(kidId, dateFrom, dateTo)
 
     override fun getSumKidAbsence(
         kidId: Int, absenceId: Int, absenceType: AbsenceType, dateFrom: Int, dateTo: Int,
@@ -47,7 +37,7 @@ class AbsencesLocalDataSource @Inject constructor(private val absenceDao: Absenc
         }
     }
 
-    override fun getSumAbsences(
+    override fun getSumKidAbsences(
         kidId: Int, dateFrom: Int, dateTo: Int, callback: (Map<AbsenceType, Int>) -> Unit
     ) {
         executorService.execute {
@@ -56,25 +46,15 @@ class AbsencesLocalDataSource @Inject constructor(private val absenceDao: Absenc
         }
     }
 
-    override fun getAbsence(kidId: Int, absenceId: Int, callback: (Absence) -> Unit) {
-        executorService.execute {
-            val absence = absenceDao.getKidAbsence(kidId, absenceId)
-            mainThreadHandler.post { callback(absence!!) }
-        }
-    }
+    override fun getAbsence(absenceId: Int): LiveData<Absence> =
+        absenceDao.getAbsence(absenceId)
 
-    override fun checkCrossing(
-        kidId: Int, absenceId: Int, dateFrom: Int, dateTo: Int, callback: (Int) -> Unit) {
-        executorService.execute {
-            val result = absenceDao.checkCrossing(kidId, absenceId, dateFrom, dateTo)
-            mainThreadHandler.post { callback(result) }
-        }
-    }
+    override fun checkCrossing(kidId: Int, absenceId: Int, dateFrom: Int, dateTo: Int) =
+        absenceDao.checkCrossing(kidId, absenceId, dateFrom, dateTo)
 
     override fun deleteAbsence(absence: Absence) {
         executorService.execute {
             absenceDao.delete(absence)
         }
     }
-
 }

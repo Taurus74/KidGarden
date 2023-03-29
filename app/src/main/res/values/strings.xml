@@ -48,7 +48,7 @@
     <string name="wrong_dates">Ошибка: начальная дата позже конечной</string>
     <string name="work_calendar">Производственный календарь</string>
     <string name="text_delete">Удалить</string>
-    <string name="absence_hint">Выберите вид отсутствия</string>
+    <string name="hint_absence">Выберите вид отсутствия</string>
     <string name="dialog_delete_record">Запись будет удалена без возможности восстановления.</string>
     <string name="dialog_title">Подтвердите удаление</string>
     <string name="date_is_empty">Заполните %s дату</string>

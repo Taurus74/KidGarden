@@ -1,102 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/base_margin"
-    tools:context=".ui.AddEditAbsenceFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.tausoft.kidsgarden.viewModels.AddEditAbsenceViewModel" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/base_margin"
-        android:layout_marginBottom="@dimen/base_margin">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/base_margin"
+        tools:context=".ui.AddEditAbsenceFragment">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/kidName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/text_from"
-            android:textSize="@dimen/text_size" />
+            android:text="@{viewmodel.kidName}"
+            android:textSize="@dimen/text_size"
+            android:hint="@string/hint_name"
+            android:minHeight="48dp"
+            android:gravity="center" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="3" >
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/base_margin"
+            android:layout_marginBottom="@dimen/base_margin">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/date_from"
-                android:layout_width="match_parent"
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/date_from"
-                android:inputType="date"
-                android:minHeight="@dimen/min_height"
-                android:focusableInTouchMode="false"
-                android:focusable="false"/>
+                android:layout_weight="1"
+                android:text="@string/text_from"
+                android:textSize="@dimen/text_size" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/base_margin"
-            android:text="@string/text_to"
-            android:textSize="@dimen/text_size" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/date_to"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/date_to"
-                android:inputType="date"
-                android:minHeight="@dimen/min_height"
-                android:focusableInTouchMode="false"
-                android:focusable="false" />
+                android:layout_weight="3">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/date_from"
+                    android:text="@{viewmodel.dateFrom}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/date_from"
+                    android:inputType="date"
+                    android:minHeight="@dimen/min_height"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/base_margin"
+                android:text="@string/text_to"
+                android:textSize="@dimen/text_size" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/date_to"
+                    android:text="@{viewmodel.dateTo}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/date_to"
+                    android:inputType="date"
+                    android:minHeight="@dimen/min_height"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/absenceTypeStr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewmodel.absenceTypeStr}"
+            android:textSize="@dimen/text_size_low"
+            android:hint="@string/hint_absence"
+            android:minHeight="48dp"
+            android:gravity="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/base_margin"
+            android:layout_marginBottom="@dimen/base_margin">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:text="@string/cancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/OK_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/half_margin"
+                android:text="@string/ok" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <Spinner
-        android:id="@+id/absences_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:contentDescription="@string/absence_hint"
-        android:minHeight="48dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="@dimen/base_margin"
-        android:layout_marginBottom="@dimen/base_margin">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:text="@string/cancel" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/OK_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/half_margin"
-            android:text="@string/ok" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</layout>

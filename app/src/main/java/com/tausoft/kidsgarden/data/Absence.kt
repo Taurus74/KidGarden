@@ -31,6 +31,6 @@ data class Absence(
 enum class AbsenceType {
     ABSENCE    { override fun toString() = "Отсутствие Н/Н (5 д.)" },
     VACATION   { override fun toString() = "Отпуск (56 д.)" },
-    COSTED     { override fun toString() = "За свой счет Н/О" },
+    COSTED     { override fun toString() = "За свой счёт Н/О" },
     SICK_LEAVE { override fun toString() = "Больничный Б/Л" }
 }

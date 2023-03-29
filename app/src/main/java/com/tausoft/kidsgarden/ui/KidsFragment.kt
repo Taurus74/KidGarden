@@ -46,7 +46,8 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentKidsBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil
+            .inflate(inflater, R.layout.fragment_kids, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
         return binding.root
@@ -100,9 +101,9 @@ class KidsFragment: Fragment(), DatePickerDialog.OnDateSetListener {
 
     private fun getKids() {
         viewModel.kids
-            .observe(viewLifecycleOwner) { kidsList ->
+            .observe(this) { kidsList ->
                 viewModel.kidsAbsences
-                    .observe(viewLifecycleOwner) { absencesMap ->
+                    .observe(this) { absencesMap ->
                         val bundle = Bundle()
                         bundle.putInt(MONTH_FROM, viewModel.monthFrom.value!!)
                         bundle.putInt(MONTH_TO,   viewModel.monthTo.value!!)

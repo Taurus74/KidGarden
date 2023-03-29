@@ -12,7 +12,7 @@ interface KidsDao: BaseDao<Kid> {
     fun getAllKids(): LiveData<List<Kid>>
 
     @Query("SELECT * FROM kids WHERE id = :id")
-    fun getKid(id: Int): Kid?
+    fun getKid(id: Int): LiveData<Kid>
 
     @Query("DELETE FROM absences WHERE kid_id = :kidId")
     fun deleteKidAbsences(kidId: Int)
