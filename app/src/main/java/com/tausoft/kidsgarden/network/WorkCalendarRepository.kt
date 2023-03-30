@@ -16,10 +16,10 @@ class WorkCalendarRepository @Inject constructor(
     private val workCalendarService: WorkCalendarService
 ) {
 
-    suspend fun getData(year: String): List<DayOff> = withContext(
+    suspend fun getData(year: Int): List<DayOff> = withContext(
         Dispatchers.IO
     ) {
-        val workCalendar = workCalendarService.getData(year)
+        val workCalendar = workCalendarService.getData(year.toString())
         convert(workCalendar)
     }
 

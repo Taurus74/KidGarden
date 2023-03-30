@@ -25,6 +25,11 @@ class AppNavigatorImpl @Inject constructor(private val activity: FragmentActivit
                     || screen == Screens.EDIT_ABSENCE))
             fragment.arguments = params
 
+        activity.title = if (screen == Screens.WORK_CALENDAR)
+            activity.resources.getText(R.string.title_work_calendar)
+        else
+            activity.resources.getText(R.string.app_name)
+
         activity.supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .addToBackStack(fragment::class.java.canonicalName)

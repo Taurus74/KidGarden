@@ -110,7 +110,7 @@ class AddEditAbsenceViewModel @Inject constructor(
         }
 
     init {
-        _id.observeForever {
+        id.observeForever {
             if (it > 0) {
                 kidsRepository.getAbsence(it).observeForever { _absence ->
                     absence = _absence
@@ -121,27 +121,27 @@ class AddEditAbsenceViewModel @Inject constructor(
                 }
             }
         }
-        _month.observeForever {
+        month.observeForever {
             _defaultDate.value = getDate(
                 CalendarHelper.currentDay(), it,year.value ?: CalendarHelper.currentYear()
             )
         }
-        _year.observeForever {
+        year.observeForever {
             _defaultDate.value = getDate(
                 CalendarHelper.currentDay(),month.value ?: CalendarHelper.currentMonth(), it
             )
         }
-        _defaultDate.observeForever {
+        defaultDate.observeForever {
             _aDateFrom.value = it
             _aDateTo.value   = it
         }
-        _aDateFrom.observeForever {
+        aDateFrom.observeForever {
             _dateFrom.value = formatDate( it )
         }
-        _aDateTo.observeForever {
+        aDateTo.observeForever {
             _dateTo.value = formatDate(it)
         }
-        _kidId.observeForever {
+        kidId.observeForever {
             if (it > 0)
                 kidsRepository.getKid(it).observeForever { kid ->
                     setKidName( kid?.name ?: "" )

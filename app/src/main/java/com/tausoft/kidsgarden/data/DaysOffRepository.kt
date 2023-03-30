@@ -1,12 +1,25 @@
 package com.tausoft.kidsgarden.data
 
-import com.tausoft.kidsgarden.dao.DaysOffDao
+import com.tausoft.kidsgarden.di.DatabaseDaysOff
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DaysOffRepository @Inject constructor(private val daysOffDao: DaysOffDao) {
+class DaysOffRepository @Inject constructor() {
 
-    fun getDaysOff(dateFrom: Int, dateTo: Int) = daysOffDao.getDaysOff(dateFrom, dateTo)
+    @DatabaseDaysOff
+    @Inject lateinit var daysOff: DaysOffDataSource
+
+    fun addDayOff(day: DayOff) = daysOff.addDayOff(day)
+
+    fun getDaysOff(yearFrom: Int, yearTo: Int) = daysOff.getDaysOff(yearFrom, yearTo)
+
+    fun getDaysOffCount(dateFrom: Int, dateTo: Int): Int {
+        var result = 0
+        daysOff.getDaysOffCount(dateFrom, dateTo) {
+            result = it
+        }
+        return result
+    }
 
 }

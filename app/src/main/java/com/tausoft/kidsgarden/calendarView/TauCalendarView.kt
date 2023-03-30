@@ -7,11 +7,9 @@ import com.tausoft.kidsgarden.calendarView.ui.MonthRow
 import java.text.DateFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.max
 import kotlin.math.min
 
-class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = null,
-                      firstDayOfWeek: Int = Calendar.MONDAY) {
+class TauCalendarView(firstDayOfWeek: Int = Calendar.MONDAY) {
     private var mFirstDayOfWeek: Int = firstDayOfWeek
 
     private val calendar = Calendar.getInstance()
@@ -20,36 +18,20 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
     private var weekDays: ArrayList<String> = arrayListOf()
     private var months: ArrayList<Month> = arrayListOf()
 
-    // Набор нерабочих (выходные, праздники, в т.ч. перенесенные) дней
+    // Набор нерабочих (выходные, праздники, в т.ч. перенесённые) дней
     // День указывается целым числом в формате ГГГГММДД
-    var mDaysOff: MutableSet<Int> = mutableSetOf()
+    private var mDaysOff: MutableSet<Int> = mutableSetOf()
 
-    init {
-        if (dateFrom != null && dateTo != null) {
-            mDateFrom.timeInMillis = min(dateFrom.timeInMillis, dateTo.timeInMillis)
-            mDateTo.  timeInMillis = max(dateFrom.timeInMillis, dateTo.timeInMillis)
-        }
-        else {
-            if (dateFrom == null) {
-                mDateFrom = Calendar.getInstance()
-                mDateFrom.set(Calendar.MONTH, 0)
-                mDateFrom.set(Calendar.DAY_OF_MONTH, 1)
-            }
-            else
-                mDateFrom = dateFrom
-            if (dateTo == null) {
-                mDateTo = Calendar.getInstance()
-                mDateTo.set(Calendar.MONTH, 11)
-                mDateTo.set(Calendar.DAY_OF_MONTH, 31)
-            }
-            else
-                mDateTo = dateTo
-            if (mDateFrom.timeInMillis > mDateTo.timeInMillis) {
-                val t = mDateFrom.timeInMillis
-                mDateFrom.timeInMillis = mDateTo.timeInMillis
-                mDateTo.timeInMillis = t
-            }
-        }
+    fun setYear(year: Int) {
+        mDateFrom = Calendar.getInstance()
+        if (year > 0)
+            mDateFrom.set(Calendar.YEAR, year)
+        mDateFrom.set(Calendar.DAY_OF_YEAR, 1)
+
+        mDateTo   = Calendar.getInstance()
+        if (year > 0)
+            mDateTo.set(Calendar.YEAR, year)
+        mDateTo.set(Calendar.DAY_OF_YEAR, mDateTo.getActualMaximum(Calendar.DAY_OF_YEAR))
 
         setWeekDays()
         initDaysOff( arrayListOf(Calendar.SATURDAY, Calendar.SUNDAY) )
@@ -57,6 +39,7 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
     }
 
     private fun initMonths() {
+        months.clear()
         // Первый месяц
         months.add(Month(mDateFrom, null, mFirstDayOfWeek))
         // Второй и последующие месяцы
@@ -85,6 +68,7 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
         return calendarRows
     }
 
+    @Suppress("unused")
     fun setFirstDayOfWeek(firstDayOfWeek: Int) {
         mFirstDayOfWeek = firstDayOfWeek
         setWeekDays()
@@ -108,9 +92,9 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
     }
 
     // Загрузка нерабочих дней
-    fun loadDaysOff(daysOff: MutableSet<Int>) {
-        if (daysOff.size > 0)
-            mDaysOff = daysOff
+    fun loadDaysOff(daysOff: List<Int>) {
+        if (daysOff.isNotEmpty())
+            mDaysOff = daysOff.toMutableSet()
     }
 
     // Получение среза нерабочих дней по заданным датам
@@ -125,9 +109,9 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
 
     // Заполнение нерабочих дней по заданным выходным дням недели
     private fun initDaysOff(weekend: ArrayList<Int>) {
-        mDaysOff = mutableSetOf()
+        mDaysOff.clear()
         val date = mDateFrom.clone() as Calendar
-        while (date < mDateTo) {
+        while (date <= mDateTo) {
             if (weekend.contains( date.get(Calendar.DAY_OF_WEEK) ))
                 mDaysOff.add(calendarToInt(date))
             date.add(Calendar.DAY_OF_YEAR, 1)
@@ -142,11 +126,11 @@ class TauCalendarView(val dateFrom: Calendar? = null, val dateTo: Calendar? = nu
     }
 
     // Добавление нерабочих дней
-    fun addDaysOff(daysOff: ArrayList<Int>) {
-        mDaysOff.addAll(daysOff)
-    }
+    @Suppress("unused")
+    fun addDaysOff(daysOff: ArrayList<Int>) = mDaysOff.addAll(daysOff)
 
     // Удаление нерабочих дней
+    @Suppress("unused")
     fun removeDaysOff(daysOff: ArrayList<Int>) {
         for (day in daysOff)
             mDaysOff.remove(day)

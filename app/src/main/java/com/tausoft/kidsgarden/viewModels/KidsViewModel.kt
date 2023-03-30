@@ -72,14 +72,14 @@ class KidsViewModel @Inject constructor(
     var kidsAbsences: LiveData<Map<Int, List<Absence>>> = _kidsAbsences
 
     init {
-        _year.observeForever {
+        year.observeForever {
             setCurrentPeriod()
         }
-        _month.observeForever {
+        month.observeForever {
             setSeasonColor()
             setCurrentPeriod()
         }
-        _currentPeriod.observeForever {
+        currentPeriod.observeForever {
             kidsRepository.getKids().observeForever {
                 _kids.value = it
             }

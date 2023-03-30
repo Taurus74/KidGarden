@@ -35,7 +35,7 @@ class AbsencesViewModel @Inject constructor(
     var month = 0
 
     init {
-        _kidId.observeForever {
+        kidId.observeForever {
             if (it > 0)
                 kidsRepository.getKid(it).observeForever { kid ->
                     setKidName( kid?.name ?: "" )

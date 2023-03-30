@@ -40,7 +40,7 @@ class AddEditKidViewModel @Inject constructor(
     var month = 0
 
     init {
-        _id.observeForever {
+        id.observeForever {
             if (it > 0) {
                 kidsRepository.getKid(it).observeForever { _kid ->
                     kid = _kid
